@@ -4,9 +4,9 @@
 #include "Project.h"
 #include "Entry.h"
 
-Project Serializer::Load(std::istream& input)
+Project Serializer::Load(const std::string& input)
 {
-	YAML::Node yaml(input);
+	YAML::Node yaml = YAML::LoadFile(input);
 	Project project;
 	if (yaml["punch-ver"].as<std::string>() == "1.0.0")
 	{
@@ -15,14 +15,14 @@ Project Serializer::Load(std::istream& input)
 	return project;
 }
 
-void Serializer::Save(const Project& project, std::ostream& output)
+void Serializer::Save(const Project& project, std::ofstream& output)
 {
 	YAML::Node yaml;
-	yaml["punch-ver"] = m_fileVer;
+	yaml["punch-ver"] = m_fileVer.c_str();
 
 	YAML::Node& projNode = yaml["project"];
 
-	projNode["name"] = project.name;
+	projNode["name"] = project.name.c_str();
 	projNode["rate"] = project.currentRate;
 
 	for (size_t i = 0; i < project.entries.size(); ++i)
@@ -36,23 +36,23 @@ void Serializer::Save(const Project& project, std::ostream& output)
 			typeStr = "Meeting";
 			break;
 		default:
-			typeStr = "Word";
+			typeStr = "Work";
 			break;
 		}
-		entryNode["type"] = typeStr;
+		entryNode["type"] = typeStr.c_str();
 		entryNode["rate"] = project.entries[i].rate;
 
-		entryNode["start"]["year"] = project.entries[i].start.year;
-		entryNode["start"]["month"] = project.entries[i].start.month;
-		entryNode["start"]["day"] = project.entries[i].start.day;
-		entryNode["start"]["hour"] = project.entries[i].start.hour;
-		entryNode["start"]["minute"] = project.entries[i].start.minute;
+		entryNode["start"]["year"] = (int)project.entries[i].start.year;
+		entryNode["start"]["month"] = (int)project.entries[i].start.month;
+		entryNode["start"]["day"] = (int)project.entries[i].start.day;
+		entryNode["start"]["hour"] = (int)project.entries[i].start.hour;
+		entryNode["start"]["minute"] = (int)project.entries[i].start.minute;
 
-		entryNode["end"]["year"] = project.entries[i].end.year;
-		entryNode["end"]["month"] = project.entries[i].end.month;
-		entryNode["end"]["day"] = project.entries[i].end.day;
-		entryNode["end"]["hour"] = project.entries[i].end.hour;
-		entryNode["end"]["minute"] = project.entries[i].end.minute;
+		entryNode["end"]["year"] = (int)project.entries[i].end.year;
+		entryNode["end"]["month"] = (int)project.entries[i].end.month;
+		entryNode["end"]["day"] = (int)project.entries[i].end.day;
+		entryNode["end"]["hour"] = (int)project.entries[i].end.hour;
+		entryNode["end"]["minute"] = (int)project.entries[i].end.minute;
 
 		projNode["entries"].push_back(entryNode);
 	}

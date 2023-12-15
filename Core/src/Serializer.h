@@ -4,8 +4,8 @@ class Project;
 class Serializer
 {
 public:
-	Project Load(std::istream& output);
-	void Save(const Project& project, std::ostream& output);
+	Project Load(const std::string& output);
+	void Save(const Project& project, std::ofstream& output);
 
 private:
 	std::string m_fileVer = "1.0.0";
