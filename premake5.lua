@@ -19,7 +19,9 @@ project "Core"
     files
     {
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/pch/pch.h",
+		"%{prj.name}/src/pch.cpp"
 	}
 	
 	includedirs

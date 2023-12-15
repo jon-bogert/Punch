@@ -1,11 +1,11 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "DateTime.h"
+#include "Entry.h"
 
 struct Project
 {
 	std::string name;
 	float currentRate = 0.f;
-	std::vector<DateTime> entries;
+	std::vector<Entry> entries;
 };

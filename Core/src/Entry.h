@@ -4,6 +4,7 @@
 struct Entry
 {
 	enum Type { Work, Meeting };
+	Type type;
 	DateTime start;
 	DateTime end;
 	float rate = 0;
