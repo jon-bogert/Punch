@@ -4,6 +4,10 @@
 class Application final
 {
     enum class Page { Start, Project };
+    struct Data
+    {
+        std::string lastDirectory = "";
+    };
 
     static Application& Get() { static Application instance; return instance; }
     Application() {}
@@ -11,6 +15,7 @@ class Application final
     std::string m_title = "Punch";
     sf::Vector2i m_dimensions = { 800, 1000 };
     std::string m_dataPath = _APPDATA_ + "/Punch";
+    Data m_data;
 
     std::deque<std::string> m_projHistory;
     Page m_page = Page::Start;
@@ -41,7 +46,10 @@ public:
 private:
     void LoadProjectHistory();
     void SaveProjectHistory();
+    void LoadData();
+    void SaveData();
 
     void StartPage();
     void AddHistory(const std::string& file);
+    std::string PathNoFile(const std::string& path);
 };

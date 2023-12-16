@@ -8,6 +8,7 @@
 void Application::Start()
 {	
 	Get().LoadProjectHistory();
+	Get().LoadData();
 }
 
 void Application::Update(const float deltaTime)
@@ -27,6 +28,7 @@ void Application::OnGui()
 void Application::Shutdown()
 {
 	Get().SaveProjectHistory();
+	Get().SaveData();
 }
 
 void Application::LoadProjectHistory()
@@ -61,6 +63,31 @@ void Application::SaveProjectHistory()
 	}
 }
 
+void Application::LoadData()
+{
+	if (!std::filesystem::exists(m_dataPath + "/data.yaml"))
+		return;
+
+	YAML::Node yaml = YAML::LoadFile(m_dataPath + "/data.yaml");
+
+	m_data.lastDirectory = yaml["last-dir"].as<std::string>();
+}
+
+void Application::SaveData()
+{
+	if (!std::filesystem::exists(m_dataPath))
+		std::filesystem::create_directories(m_dataPath);
+
+	std::ofstream file(m_dataPath + "/data.yaml");
+	if (!file.is_open())
+		throw std::exception("data.yaml is inaccessible");
+
+	YAML::Node yaml;
+	yaml["last-dir"] = m_data.lastDirectory;
+
+	file << yaml;
+}
+
 void Application::StartPage()
 {
 	std::string fileToOpen;
@@ -82,7 +109,12 @@ void Application::StartPage()
 		browser.PushFileType(L"*.punch", L"Punch File");
 		browser.PushFileType(L"*.yaml;*.yml", L"YAML File");
 		browser.PushFileType(L"*.*", L"All File Types");
+		browser.SetStartPath(ToWideString(m_data.lastDirectory));
 		fileToOpen = ToShortString(browser.GetFile());
+		std::string path = PathNoFile(fileToOpen);
+		if (path != "")
+			m_data.lastDirectory = path;
+
 	}
 
 	if (ImGui::Button("Create New"))
@@ -92,7 +124,12 @@ void Application::StartPage()
 		browser.PushFileType(L"*.yaml;*.yml", L"YAML File");
 		browser.PushFileType(L"*.*", L"All File Types");
 		browser.SetDefaultExtension(L"punch");
+		browser.SetStartPath(ToWideString(m_data.lastDirectory));
 		fileToOpen = ToShortString(browser.SaveFile());
+		std::string path = PathNoFile(fileToOpen);
+		if (path != "")
+			m_data.lastDirectory = path;
+
 		doLoad = false;
 	}
 
@@ -138,4 +175,17 @@ void Application::AddHistory(const std::string& file)
 		m_projHistory.pop_back();
 
 	m_projHistory.push_front(file);
+}
+
+std::string Application::PathNoFile(const std::string& path)
+{
+	if (path.empty())
+		return path;
+
+	std::string result = path;
+
+	while (result.back() != '/' && result.back() != '\\')
+		result.pop_back();
+
+	return result;
 }
