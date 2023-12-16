@@ -2,6 +2,7 @@
 #include "Serializer.h"
 
 #include "Entry.h"
+#include "Project.h"
 
 Project Serializer::Load(const std::string& input)
 {

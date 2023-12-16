@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Project.h"
-
+struct Project;
 class Serializer
 {
 public:
