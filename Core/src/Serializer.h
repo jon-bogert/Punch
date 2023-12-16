@@ -1,6 +1,7 @@
 #pragma once
 
-class Project;
+#include "Project.h"
+
 class Serializer
 {
 public:
@@ -9,6 +10,5 @@ public:
 
 private:
 	std::string m_fileVer = "1.0.0";
-
 	Project ReadVersion0(const YAML::Node& yaml); // 1.0.0;
 };

@@ -1,13 +1,12 @@
 #include "pch.h"
 #include "Serializer.h"
 
-#include "Project.h"
 #include "Entry.h"
 
 Project Serializer::Load(const std::string& input)
 {
-	YAML::Node yaml = YAML::LoadFile(input);
 	Project project;
+	YAML::Node yaml = YAML::LoadFile(input);
 	if (yaml["punch-ver"].as<std::string>() == "1.0.0")
 	{
 		project = ReadVersion0(yaml["project"]);
@@ -66,6 +65,9 @@ Project Serializer::ReadVersion0(const YAML::Node& yaml)
 
 	project.name = yaml["name"].as<std::string>();
 	project.currentRate = yaml["rate"].as<float>();
+	if (!yaml["entries"].IsDefined())
+		return project;
+
 	size_t entryLength = yaml["entries"].size();
 	project.entries.resize(entryLength);
 	for (size_t i = 0; i < entryLength; ++i)
