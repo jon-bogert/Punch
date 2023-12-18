@@ -8,4 +8,5 @@ struct Project
 	std::string name;
 	float currentRate = 0.f;
 	std::vector<Entry> entries;
+	std::string filePath;
 };

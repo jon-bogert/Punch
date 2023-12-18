@@ -27,6 +27,9 @@ class Application final
 
     inline static int MAX_HISTORY = 10;
 
+    //View Page
+    bool m_hasSaved = true;
+
 public:
 
     ~Application() = default;
@@ -52,4 +55,6 @@ private:
     void StartPage();
     void AddHistory(const std::string& file);
     std::string PathNoFile(const std::string& path);
+
+    void ProjectPage();
 };

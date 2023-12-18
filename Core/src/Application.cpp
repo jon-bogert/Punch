@@ -22,6 +22,9 @@ void Application::OnGui()
 	case Page::Start:
 		Get().StartPage();
 		break;
+	case Page::Project:
+		Get().ProjectPage();
+		break;
 	}
 }
 
@@ -157,6 +160,7 @@ void Application::StartPage()
 		}
 		AddHistory(fileToOpen);
 		m_page = Page::Project;
+		bool isSaved = true;
 	}
 }
 
@@ -188,4 +192,27 @@ std::string Application::PathNoFile(const std::string& path)
 		result.pop_back();
 
 	return result;
+}
+
+void Application::ProjectPage()
+{
+	if (ImGui::Button("Back"))
+	{
+		if (m_hasSaved)
+		{
+			ImGui::BeginPopup("Hello World");
+			ImGui::Text("Hello World");
+			ImGui::EndPopup();
+		}
+		m_page = Page::Start;
+		m_activeProject = nullptr;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Save"))
+	{
+		std::ofstream file(m_activeProject->filePath);
+		Serializer serializer;
+		serializer.Save(*m_activeProject, file);
+		m_hasSaved = true;
+	}
 }
