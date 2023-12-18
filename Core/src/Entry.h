@@ -8,6 +8,7 @@ struct Entry
 	DateTime start;
 	DateTime end;
 	float rate = 0;
+	bool isCharged = false;
 
 	DateTime GetElapsed() const
 	{

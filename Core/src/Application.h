@@ -29,6 +29,7 @@ class Application final
 
     //View Page
     bool m_hasSaved = true;
+    int m_entryIndex = -1;
 
 public:
 

@@ -41,6 +41,7 @@ void Serializer::Save(const Project& project, std::ofstream& output)
 		}
 		entryNode["type"] = typeStr.c_str();
 		entryNode["rate"] = project.entries[i].rate;
+		entryNode["is-charged"] = project.entries[i].isCharged;
 
 		entryNode["start"]["year"] = (int)project.entries[i].start.year;
 		entryNode["start"]["month"] = (int)project.entries[i].start.month;
@@ -87,6 +88,7 @@ Project Serializer::ReadVersion0(const YAML::Node& yaml)
 		entry.end.minute =   yaml["entries"][i]["end"]["minute"].as<uint8_t>();
 
 		entry.rate = yaml["entries"][i]["rate"].as<float>();
+		entry.isCharged = yaml["entries"][i]["is-charged"].as<bool>();
 		std::string typeStr = yaml["entries"][i]["type"].as<std::string>();
 
 		if (typeStr == "Meeting")

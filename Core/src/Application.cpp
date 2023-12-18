@@ -6,7 +6,7 @@
 #include "Project.h"
 
 void Application::Start()
-{	
+{
 	Get().LoadProjectHistory();
 	Get().LoadData();
 }
@@ -194,18 +194,33 @@ std::string Application::PathNoFile(const std::string& path)
 	return result;
 }
 
+namespace
+{
+	std::string TwoDig(uint8_t num)
+	{
+		std::string result;
+		if (num < 10)
+			result = "0";
+		result += std::to_string(num);
+		return result;
+	}
+
+	std::string FltStr(float flt)
+	{
+		std::string result = std::to_string(flt);
+		result = result.substr(0, result.size() - 4);
+		return result;
+	}
+}
+
 void Application::ProjectPage()
 {
-	if (ImGui::Button("Back"))
+	const char* backName = (m_hasSaved) ? "Back" : "Back*";
+	if (ImGui::Button(backName))
 	{
-		if (m_hasSaved)
-		{
-			ImGui::BeginPopup("Hello World");
-			ImGui::Text("Hello World");
-			ImGui::EndPopup();
-		}
 		m_page = Page::Start;
 		m_activeProject = nullptr;
+		m_entryIndex = -1;
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Save"))
@@ -215,4 +230,38 @@ void Application::ProjectPage()
 		serializer.Save(*m_activeProject, file);
 		m_hasSaved = true;
 	}
+	ImGui::Text("Entries:");
+
+	std::vector<std::string> entryDates;
+
+	ImGui::Columns(2, "##MainEntryColumn", true);
+
+	for (const Entry& e : m_activeProject->entries)
+	{
+		entryDates.push_back(((e.isCharged) ? "" : "*") + std::to_string(e.start.year) + "-" + TwoDig(e.start.month) + "-" + TwoDig(e.start.day));
+	}
+
+	ImGui::ListBox("##EntryList", &m_entryIndex, CStrVect(entryDates).data(), entryDates.size(), 10);
+
+	ImGui::NextColumn();
+
+	if (m_entryIndex >= 0)
+	{
+		const Entry& entry = m_activeProject->entries[m_entryIndex];
+		ImGui::Text("START");
+		ImGui::Text(("\tDay: " + entryDates[m_entryIndex]).c_str());
+		ImGui::Text(("\tTime: " + std::to_string(entry.start.hour) + ":" + std::to_string(entry.start.minute)).c_str());
+		ImGui::Text("End");
+		ImGui::Text(("\tDay: " + std::to_string(entry.end.year) + "-" + TwoDig(entry.end.month) + "-" + TwoDig(entry.end.day)).c_str());
+		ImGui::Text(("\tTime: " + std::to_string(entry.end.hour) + ":" + std::to_string(entry.end.minute)).c_str());
+		ImGui::NewLine();
+
+		ImGui::Text(("Hours: " + FltStr(entry.GetElapsed().GetHours())).c_str());
+		ImGui::Text(("Rate: $" + FltStr(entry.rate)).c_str());
+		ImGui::Text(("Cost: $" + FltStr(entry.GetElapsed().GetHours() * entry.rate)).c_str());
+		ImGui::Text(("Charged: " + ((entry.isCharged) ? std::string("Yes") : std::string("No"))).c_str());
+	}
+
+	ImGui::Columns(1);
+	ImGui::Text("Hello World");
 }

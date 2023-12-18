@@ -5,6 +5,7 @@ project:
   entries:
     - type: Meeting
       rate: 20
+      is-charged: True
       start:
         year: 2023
         month: 1
@@ -19,6 +20,7 @@ project:
         minute: 45
     - type: Work
       rate: 22
+      is-charged: False
       start:
         year: 2023
         month: 1
