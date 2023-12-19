@@ -321,4 +321,118 @@ void Application::ProjectPage()
 
 void Application::EditPage()
 {
+	ImGui::Columns(2, "##EditCols");
+	ImGui::Text("START:");
+	int tmpInt = m_workingEntry.start.year;
+	ImGui::SetNextItemWidth(100);
+	if (ImGui::InputInt("Year##Start", &tmpInt))
+	{
+		m_workingEntry.start.year = tmpInt;
+	}
+	tmpInt = m_workingEntry.start.month;
+	ImGui::SetNextItemWidth(100);
+	if (ImGui::InputInt("Month##Start", &tmpInt))
+	{
+		m_workingEntry.start.month = tmpInt;
+	}
+	tmpInt = m_workingEntry.start.day;
+	ImGui::SetNextItemWidth(100);
+	if (ImGui::InputInt("Day##Start", &tmpInt))
+	{
+		m_workingEntry.start.day = tmpInt;
+	}
+	ImGui::NewLine();
+	tmpInt = m_workingEntry.start.hour;
+	ImGui::SetNextItemWidth(100);
+	if (ImGui::InputInt("##HourStart", &tmpInt))
+	{
+		m_workingEntry.start.hour = tmpInt;
+	}
+	ImGui::SameLine();
+	ImGui::Text(":");
+	ImGui::SameLine();
+	tmpInt = m_workingEntry.start.minute;
+	ImGui::SetNextItemWidth(100);
+	if (ImGui::InputInt("Time##MinuteStart", &tmpInt))
+	{
+		m_workingEntry.start.minute = tmpInt;
+		m_workingEntry.start.RoundMinute();
+	}
+	if (ImGui::Button("Now##Start"))
+	{
+		m_workingEntry.start = DateTime::Now();
+	}
+
+	ImGui::NextColumn();
+
+	ImGui::Text("END:");
+	tmpInt = m_workingEntry.end.year;
+	ImGui::SetNextItemWidth(100);
+	if (ImGui::InputInt("Year##End", &tmpInt))
+	{
+		m_workingEntry.end.year = tmpInt;
+	}
+	tmpInt = m_workingEntry.end.month;
+	ImGui::SetNextItemWidth(100);
+	if (ImGui::InputInt("Month##End", &tmpInt))
+	{
+		m_workingEntry.end.month = tmpInt;
+	}
+	tmpInt = m_workingEntry.end.day;
+	ImGui::SetNextItemWidth(100);
+	if (ImGui::InputInt("Day##End", &tmpInt))
+	{
+		m_workingEntry.end.day = tmpInt;
+	}
+	ImGui::NewLine();
+	tmpInt = m_workingEntry.end.hour;
+	ImGui::SetNextItemWidth(100);
+	if (ImGui::InputInt("##HourEnd", &tmpInt))
+	{
+		m_workingEntry.end.hour = tmpInt;
+	}
+	ImGui::SameLine();
+	ImGui::Text(":");
+	ImGui::SameLine();
+	tmpInt = m_workingEntry.end.minute;
+	ImGui::SetNextItemWidth(100);
+	if (ImGui::InputInt("Time##MinuteEnd", &tmpInt))
+	{
+		m_workingEntry.end.minute = tmpInt;
+		m_workingEntry.end.RoundMinute();
+	}
+	if (ImGui::Button("Now##End"))
+	{
+		m_workingEntry.end = DateTime::Now();
+		m_workingEntry.end.RoundMinute();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Clear##End"))
+	{
+		m_workingEntry.end = DateTime();
+	}
+
+	ImGui::Columns(1);
+
+	ImGui::NewLine();
+
+	ImGui::NewLine();
+
+
+
+	if (ImGui::Button("Apply"))
+	{
+		m_activeProject->entries[m_entryIndex] = m_workingEntry;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Cancel"))
+	{
+		m_page = Page::Project;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("OK"))
+	{
+		m_activeProject->entries[m_entryIndex] = m_workingEntry;
+		m_page = Page::Project;
+	}
 }
