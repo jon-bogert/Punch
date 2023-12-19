@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <chrono>
 
 struct DateTime
 {
@@ -73,4 +74,32 @@ struct DateTime
 	bool operator>=(const DateTime& rhs) const { return GetMinutes() >= rhs.GetMinutes(); }
 	bool operator==(const DateTime& rhs) const { return GetMinutes() == rhs.GetMinutes(); }
 	bool operator!=(const DateTime& rhs) const { return GetMinutes() != rhs.GetMinutes(); }
+
+	void RoundMinute()
+	{
+		if (minute % 15 > 7)
+		{
+			minute = (minute / 15) * 15 + 15;
+			return;
+		}
+		minute = (minute / 15) * 15;
+	}
+
+	static DateTime Now()
+	{
+		DateTime result{};
+
+		std::chrono::system_clock::time_point timePoint = std::chrono::system_clock::now();
+		std::time_t timeT = std::chrono::system_clock::to_time_t(timePoint);
+		std::tm* now  = std::localtime(&timeT);
+
+		// Print year, month, day, hour, and minute
+		result.year = static_cast<uint16_t>(now->tm_year + 1900);
+		result.month = static_cast<uint8_t>(now->tm_mon + 1);
+		result.day = static_cast<uint8_t>(now->tm_mday);
+		result.hour = static_cast<uint8_t>(now->tm_hour);
+		result.minute = static_cast<uint8_t>(now->tm_min);
+
+		return result;
+	}
 };

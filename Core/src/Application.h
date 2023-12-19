@@ -3,7 +3,7 @@
 
 class Application final
 {
-    enum class Page { Start, Project };
+    enum class Page { Start, Project, Edit };
     struct Data
     {
         std::string lastDirectory = "";
@@ -30,6 +30,9 @@ class Application final
     //View Page
     bool m_hasSaved = true;
     int m_entryIndex = -1;
+
+    //Edit Page
+    Entry m_workingEntry;
 
 public:
 
@@ -58,4 +61,5 @@ private:
     std::string PathNoFile(const std::string& path);
 
     void ProjectPage();
+    void EditPage();
 };

@@ -25,6 +25,9 @@ void Application::OnGui()
 	case Page::Project:
 		Get().ProjectPage();
 		break;
+	case Page::Edit:
+		Get().EditPage();
+		break;
 	}
 }
 
@@ -248,20 +251,74 @@ void Application::ProjectPage()
 	if (m_entryIndex >= 0)
 	{
 		const Entry& entry = m_activeProject->entries[m_entryIndex];
+		bool isIncomplete = (entry.end.year == 0);
 		ImGui::Text("START");
-		ImGui::Text(("\tDay: " + entryDates[m_entryIndex]).c_str());
-		ImGui::Text(("\tTime: " + std::to_string(entry.start.hour) + ":" + std::to_string(entry.start.minute)).c_str());
-		ImGui::Text("End");
-		ImGui::Text(("\tDay: " + std::to_string(entry.end.year) + "-" + TwoDig(entry.end.month) + "-" + TwoDig(entry.end.day)).c_str());
-		ImGui::Text(("\tTime: " + std::to_string(entry.end.hour) + ":" + std::to_string(entry.end.minute)).c_str());
+		ImGui::Text(("\tDay: " + std::to_string(entry.start.year) + "-" + TwoDig(entry.start.month) + "-" + TwoDig(entry.start.day)).c_str());
+		ImGui::Text(("\tTime: " + std::to_string(entry.start.hour) + ":" + TwoDig(entry.start.minute)).c_str());
+		ImGui::Text("END");
+		if (isIncomplete)
+		{
+			ImGui::Text("\tDay: -");
+			ImGui::Text("\tTime: -");
+		}
+		else
+		{
+			ImGui::Text(("\tDay: " + std::to_string(entry.end.year) + "-" + TwoDig(entry.end.month) + "-" + TwoDig(entry.end.day)).c_str());
+			ImGui::Text(("\tTime: " + std::to_string(entry.end.hour) + ":" + TwoDig(entry.end.minute)).c_str());
+		}
 		ImGui::NewLine();
 
-		ImGui::Text(("Hours: " + FltStr(entry.GetElapsed().GetHours())).c_str());
-		ImGui::Text(("Rate: $" + FltStr(entry.rate)).c_str());
-		ImGui::Text(("Cost: $" + FltStr(entry.GetElapsed().GetHours() * entry.rate)).c_str());
-		ImGui::Text(("Charged: " + ((entry.isCharged) ? std::string("Yes") : std::string("No"))).c_str());
+		if (isIncomplete)
+		{
+			ImGui::Text("Hours: -");
+			ImGui::Text("Rate: -");
+			ImGui::Text("Cost: -");
+			ImGui::Text("Charged: -");
+		}
+		else
+		{
+			ImGui::Text(("Hours: " + FltStr(entry.GetElapsed().GetHours())).c_str());
+			ImGui::Text(("Rate: $" + FltStr(entry.rate)).c_str());
+			ImGui::Text(("Cost: $" + FltStr(entry.GetElapsed().GetHours() * entry.rate)).c_str());
+			ImGui::Text(("Charged: " + ((entry.isCharged) ? std::string("Yes") : std::string("No"))).c_str());
+		}
+		ImGui::NewLine();
+		if (ImGui::Button("Edit##CurrentEntry"))
+		{
+			m_workingEntry = entry;
+			m_page = Page::Edit;
+		}
+		if (isIncomplete)
+		{
+			ImGui::SameLine();
+			if (ImGui::Button("End Now##CurrentEntry"))
+			{
+				m_activeProject->entries[m_entryIndex].end = DateTime::Now();
+				m_activeProject->entries[m_entryIndex].end.RoundMinute();
+			}
+		}
 	}
 
 	ImGui::Columns(1);
-	ImGui::Text("Hello World");
+	if (ImGui::Button("New"))
+	{
+		m_workingEntry = Entry();
+		m_entryIndex = m_activeProject->entries.size();
+		m_activeProject->entries.emplace_back();
+		m_page = Page::Edit;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("New Now"))
+	{
+		m_workingEntry = Entry();
+		m_entryIndex = m_activeProject->entries.size();
+		m_workingEntry.start = DateTime::Now();
+		m_workingEntry.start.RoundMinute();
+		m_activeProject->entries.push_back(m_workingEntry);
+	}
+	
+}
+
+void Application::EditPage()
+{
 }
